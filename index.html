@@ -658,12 +658,20 @@
             countElement.textContent = '—';
         });
 
-        // Called on every download button click
-        // Uses set+merge so it works even if doc doesn't exist yet
+        // Called on every download button click — uses transaction for safety
         function incrementDownload() {
-            statsRef.set({
-                count: firebase.firestore.FieldValue.increment(1)
-            }, { merge: true }).catch(err => console.error('Increment error:', err));
+            console.log('[PawCare] Download clicked — incrementing Firestore counter...');
+            db.runTransaction(async (transaction) => {
+                const doc = await transaction.get(statsRef);
+                const newCount = doc.exists ? (doc.data().count || 0) + 1 : 1;
+                transaction.set(statsRef, { count: newCount });
+                return newCount;
+            }).then(newCount => {
+                console.log('[PawCare] Counter updated to:', newCount);
+                countElement.textContent = newCount.toLocaleString();
+            }).catch(err => {
+                console.error('[PawCare] Write FAILED — likely a Firestore Rules issue:', err.message);
+            });
         }
 
         // ── Carousel Logic ────────────────────────────────────────────
