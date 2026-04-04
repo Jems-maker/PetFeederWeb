@@ -82,10 +82,19 @@
         
         .header-logo {
             flex: 1;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             font-size: 15px;
             font-weight: 600;
             letter-spacing: -0.5px;
+        }
+        
+        .header-logo img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
         }
 
         .header-right { flex: 1; display: flex; justify-content: flex-end; }
@@ -341,11 +350,11 @@
             margin-top: 40px;
         }
 
-        /* --- Device Showcase --- */
+        /* --- Showcase Section --- */
         .showcase-container {
             display: flex;
             justify-content: center;
-            margin: 80px 0;
+            margin: 80px auto;
         }
 
         .image-carousel {
@@ -407,6 +416,12 @@
             .hero-title { font-size: 3.5rem; }
             .metrics-row { gap: 16px; }
             .header-nav { display: none; }
+            
+            /* Center Timeline & Panels on Mobile */
+            .timeline-step { text-align: center; }
+            .step-num { margin: 0 auto 8px; display: inline-block; }
+            .glass-panel { align-items: center; text-align: center; }
+            .panel-list li { justify-content: center; text-align: left; }
         }
     </style>
 </head>
@@ -422,6 +437,7 @@
                 <a href="#showcase">Interface</a>
             </nav>
             <div class="header-logo">
+                <img src="paw_logo.png" alt="PawCare Logo" onerror="this.style.display='none'">
                 PAWCARE
             </div>
             <div class="header-right">
