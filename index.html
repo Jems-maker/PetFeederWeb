@@ -649,26 +649,21 @@
         // ── Live Download Counter ──────────────────────────────────────
         const countElement = document.getElementById('download-count');
 
-        // Ensure the document exists on first load
-        statsRef.get().then(doc => {
-            if (!doc.exists) {
-                statsRef.set({ count: 0 });
-            }
+        // Real-time listener — always update UI (show 0 if doc missing)
+        statsRef.onSnapshot(doc => {
+            const count = doc.exists ? (doc.data().count || 0) : 0;
+            countElement.textContent = count.toLocaleString();
+        }, err => {
+            console.error('Firestore listener error:', err);
+            countElement.textContent = '—';
         });
 
-        // Real-time listener — updates UI automatically
-        statsRef.onSnapshot(doc => {
-            if (doc.exists) {
-                const count = doc.data().count || 0;
-                countElement.textContent = count.toLocaleString();
-            }
-        }, err => console.error('Firestore listener error:', err));
-
         // Called on every download button click
+        // Uses set+merge so it works even if doc doesn't exist yet
         function incrementDownload() {
-            statsRef.update({
+            statsRef.set({
                 count: firebase.firestore.FieldValue.increment(1)
-            }).catch(err => console.error('Increment error:', err));
+            }, { merge: true }).catch(err => console.error('Increment error:', err));
         }
 
         // ── Carousel Logic ────────────────────────────────────────────
